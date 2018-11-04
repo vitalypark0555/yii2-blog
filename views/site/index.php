@@ -1,53 +1,56 @@
-<?php
-
-/* @var $this yii\web\View */
-
-$this->title = 'My Yii Application';
-?>
-<div class="site-index">
-
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
+<div class="row">
+    <div class="content">
+        <?php foreach ($posts as $post) : ?>
+            <article class="blog-entry">
+                <div class="blog-wrap">
+                    <span class="category text-center"><a
+                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>">Health</a> | <a
+                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>">Workout</a></span>
+                    <h2 class="text-center"><a
+                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>"><?= $post->title ?></a>
+                    </h2>
+                    <div class="blog-image">
+                        <a href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>"
+                           class="blog-img text-center"
+                           style="background-image: url(images/blog-2.jpg);"><span><i class="icon-link"></i></span></a>
+                        <ul class="share">
+                            <li class="text-vertical"><i class="icon-share3"></i></li>
+                            <li><a href="#"><i class="icon-facebook"></i></a></li>
+                            <li><a href="#"><i class="icon-twitter"></i></a></li>
+                            <li><a href="#"><i class="icon-googleplus"></i></a></li>
+                    </div>
+                    <span class="category text-center"><a
+                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>"><i
+                                    class="icon-calendar3"></i> <?= date('F j, Y', $post->create_time) ?></a> | <a
+                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>"
+                                class="posted-by"><i
+                                    class="icon-user2"></i> by <?= $post->author->username ?></a> | <a
+                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>"><i
+                                    class="icon-bubble3"></i> <?= $post->commentsCount ?>
+                            Comments</a></span>
+                </div>
+                <div class="desc">
+                    <p><?= \yii\helpers\BaseStringHelper::truncate($post->content, 300) ?></p>
+                </div>
+                <p class="text-center"><a href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>"
+                                          class="btn btn-primary btn-custom">Continue
+                        Reading</a></p>
+            </article>
+        <?php endforeach; ?>
         <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+            <div class="col-md-12 text-center">
+                <?= \yii\widgets\LinkPager::widget([
+                    'pagination' => $pagination,
+                    'options' => ['class' => 'pagination']
+                ]) ?>
             </div>
         </div>
-
     </div>
+    <?= $this->render(
+        '../layouts/sidebar.php',
+        [
+            'tags' => $tags,
+            'recentPosts' => $recentPosts
+        ]
+    ) ?>
 </div>

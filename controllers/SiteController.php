@@ -2,13 +2,17 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\filters\AccessControl;
-use yii\web\Controller;
-use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\LoginForm;
+use app\models\Post;
+use app\models\Tag;
+use Yii;
+use yii\data\Pagination;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class SiteController extends Controller
 {
@@ -61,7 +65,33 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $tags = Tag::find()->orderBy('id DESC')->all();
+        $query = Post::find()->orderBy("id DESC");
+        $pagination = new Pagination([
+            'defaultPageSize' => 3,
+            'totalCount' => $query->count()
+        ]);
+
+        $posts = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        $recentPosts = Post::find()->orderBy('id DESC')->limit(4)->all();
+        return $this->render('index', [
+            'posts' => $posts,
+            'tags' => $tags,
+            'pagination' => $pagination,
+            'recentPosts' => $recentPosts
+        ]);
+    }
+
+    public function actionPost($id)
+    {
+        $post = Post::find()->where(['id' => intval($id)])->one();
+        if (empty($post))
+            throw new NotFoundHttpException('The requested page does not exist.');
+        return $this->render('single', [
+            'post' => $post
+        ]);
     }
 
     /**
