@@ -5,20 +5,20 @@ use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\TagSearch */
+/* @var $searchModel app\models\CategorySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Tags';
+$this->title = 'Categories';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="tag-index">
+<div class="category-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Tag', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Category', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <div class="box box-primary">
         <div class="box-body">
@@ -30,7 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     'id',
                     'name',
-                    'frequency',
 
                     ['class' => 'yii\grid\ActionColumn'],
                 ],

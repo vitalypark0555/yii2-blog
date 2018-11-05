@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "{{%tbl_post}}".
@@ -15,6 +16,7 @@ use Yii;
  * @property int $create_time
  * @property int $update_time
  * @property int $author_id
+ * @property int $category_id
  *
  * @property Comment[] $comments
  * @property User $author
@@ -42,6 +44,7 @@ class Post extends \yii\db\ActiveRecord
         return [
             [['title', 'content', 'status'], 'required'],
             [['content', 'tags'], 'string'],
+            ['category_id', 'integer'],
             [['status'], 'in', 'range' => [1, 2, 3]],
             [['title'], 'string', 'max' => 128],
             [
@@ -49,7 +52,7 @@ class Post extends \yii\db\ActiveRecord
                 'message' => 'В тегах можно использовать только буквы.'
             ],
             ['tags', 'normalizeTags'],
-            ['title, status', 'safe', 'on' => 'search'],
+            [['title', 'status', 'category_id'], 'safe', 'on' => 'search'],
         ];
     }
 
@@ -67,6 +70,7 @@ class Post extends \yii\db\ActiveRecord
             'create_time' => 'Create Time',
             'update_time' => 'Update Time',
             'author_id' => 'Author ID',
+            'category_id' => 'Category'
         ];
     }
 
@@ -94,6 +98,11 @@ class Post extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'author_id']);
     }
 
+    public function getCategory()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'category_id']);
+    }
+
     public function normalizeTags($attribute, $params)
     {
         $this->tags = Tag::array2string(array_unique(Tag::string2array($this->tags)));
@@ -105,7 +114,7 @@ class Post extends \yii\db\ActiveRecord
      * @param Comment the comment to be added
      * @return boolean whether the comment is saved successfully
      */
-    public function addComment($comment)
+    public function addComment(Comment $comment)
     {
         if (Yii::$app->params['commentNeedApproval'])
             $comment->status = Comment::STATUS_PENDING;
@@ -158,6 +167,11 @@ class Post extends \yii\db\ActiveRecord
         parent::afterDelete();
         Comment::deleteAll('post_id=' . $this->id);
         Tag::updateFrequency($this->tags, '');
+    }
+
+    public function getUrl()
+    {
+        return Url::to(['post/view', 'id' => $this->id]);
     }
 
 }

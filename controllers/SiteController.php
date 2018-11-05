@@ -66,7 +66,8 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $tags = Tag::find()->orderBy('id DESC')->all();
-        $query = Post::find()->orderBy("id DESC");
+        $query = Post::find()->where(['status' => Post::STATUS_PUBLISHED])
+            ->orderBy("id DESC");
         $pagination = new Pagination([
             'defaultPageSize' => 3,
             'totalCount' => $query->count()
@@ -75,7 +76,8 @@ class SiteController extends Controller
         $posts = $query->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
-        $recentPosts = Post::find()->orderBy('id DESC')->limit(4)->all();
+        $recentPosts = Post::find()->where(['status' => Post::STATUS_PUBLISHED])
+            ->orderBy('id DESC')->limit(4)->all();
         return $this->render('index', [
             'posts' => $posts,
             'tags' => $tags,

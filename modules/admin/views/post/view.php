@@ -24,19 +24,23 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]) ?>
     </p>
+    <div class="box box-primary">
+        <div class="box-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id',
+                    'title',
+                    'content:ntext',
+                    'tags:ntext',
+                    'status',
+                    'create_time:datetime',
+                    'update_time:datetime',
+                    'author_id',
+                ],
+            ]) ?>
+        </div>
+    </div>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'title',
-            'content:ntext',
-            'tags:ntext',
-            'status',
-            'create_time:datetime',
-            'update_time:datetime',
-            'author_id',
-        ],
-    ]) ?>
 
 </div>
