@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\web\IdentityInterface;
+
 /**
  * This is the model class for table "{{%tbl_user}}".
  *
@@ -10,11 +12,13 @@ namespace app\models;
  * @property string $password
  * @property string $email
  * @property string $profile
- *
+ * @property string $auth_key
  * @property Post[] $posts
  */
-class User extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
+    public $hashPassword = false;
+
     /**
      * @inheritdoc
      */
@@ -47,6 +51,55 @@ class User extends \yii\db\ActiveRecord
             'email' => 'Email',
             'profile' => 'Profile',
         ];
+    }
+
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    public static function findByUsername($username)
+    {
+        return static::findOne(['username' => $username]);
+    }
+
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+
+    public function getAuthKey()
+    {
+        return $this->auth_key;
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
+    }
+
+    public function validatePassword($password)
+    {
+        return \Yii::$app->security->validatePassword($password, $this->password);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->hashPassword) {
+                $this->password = \Yii::$app->security->generatePasswordHash($this->password, 10);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

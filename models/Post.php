@@ -142,7 +142,7 @@ class Post extends \yii\db\ActiveRecord
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
                 $this->create_time = $this->update_time = time();
-                $this->author_id = 1;
+                $this->author_id = Yii::$app->user->id;
             } else
                 $this->update_time = time();
             return true;

@@ -26,6 +26,9 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'security' => [
+            'passwordHashStrategy' => 'password_hash'
+        ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set

@@ -7,6 +7,7 @@
 
 namespace app\commands;
 
+use app\models\User;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -28,7 +29,11 @@ class HelloController extends Controller
     public function actionIndex($message = 'hello world')
     {
         echo $message . "\n";
+        $user = User::findOne(['id' => 1]);
 
+
+        $user->hashPassword = true;
+        $user->save();
         return ExitCode::OK;
     }
 }
