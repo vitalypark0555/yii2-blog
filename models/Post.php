@@ -165,7 +165,7 @@ class Post extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        Comment::deleteAll('post_id=' . $this->id);
+        Comment::deleteAll(['post_id' => $this->id]);
         Tag::updateFrequency($this->tags, '');
     }
 

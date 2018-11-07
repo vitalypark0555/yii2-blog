@@ -20,24 +20,35 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Comment', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+    <div class="box box-primary">
+        <div class="box-body">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+                    'id',
+                    'content:ntext',
+                    [
+                        'attribute' => 'status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            if ($model->status == 1)
+                                return Html::a('Approve', ['comment/approve', 'id' => $model->id], ['class' => 'btn btn-warning', 'data-pjax' => 0]);
+                            return '<span class="label label-success">' . \app\models\Lookup::item("CommentStatus", $model->status) . '</span>';
+                        }
+                    ],
+                    'create_time:datetime',
+                    'author',
+                    //'email:email',
+                    //'url:url',
+                    //'post_id',
 
-            'id',
-            'content:ntext',
-            'status',
-            'create_time:datetime',
-            'author',
-            //'email:email',
-            //'url:url',
-            //'post_id',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+                    ['class' => 'yii\grid\ActionColumn'],
+                ],
+            ]); ?>
+        </div>
+    </div>
     <?php Pjax::end(); ?>
 </div>

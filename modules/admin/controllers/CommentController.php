@@ -124,4 +124,11 @@ class CommentController extends Controller
 
         return $this->redirect(['index']);
     }
+
+    public function actionApprove($id)
+    {
+        $model = $this->findModel($id);
+        $model->approve();
+        return $this->redirect('index');
+    }
 }

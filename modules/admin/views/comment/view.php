@@ -25,18 +25,33 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'content:ntext',
-            'status',
-            'create_time:datetime',
-            'author',
-            'email:email',
-            'url:url',
-            'post_id',
-        ],
-    ]) ?>
+    <div class="box box-primary">
+        <div class="box-body">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id',
+                    'content:ntext',
+                    [
+                        'attribute' => 'status',
+                        'value' => function ($model) {
 
+                            return \app\models\Lookup::item("CommentStatus", $model->status);
+                        }
+                    ],
+                    'create_time:datetime',
+                    'author',
+                    'email:email',
+                    'url:url',
+                    [
+                        'attribute' => 'post_id',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            return Html::a($model->post->title, ['/site/post', 'id' => $model->post->id]);
+                        }
+                    ]
+                ],
+            ]) ?>
+        </div>
+    </div>
 </div>

@@ -1,3 +1,6 @@
+<?php
+
+?>
 <aside class="main-sidebar">
 
     <section class="sidebar">
@@ -33,6 +36,7 @@
                     ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
                     ['label' => 'Categories', 'icon' => 'list-alt', 'url' => ['category/index']],
                     ['label' => 'Posts', 'icon' => 'newspaper-o', 'url' => ['post/index']],
+                    ['label' => 'Comments', 'icon' => 'comments', 'url' => ['comment/index']],
                     ['label' => 'Tags', 'icon' => 'tags', 'url' => ['tag/index']],
                 ],
             ]

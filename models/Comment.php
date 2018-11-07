@@ -35,11 +35,10 @@ class Comment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['content', 'status', 'author', 'email', 'post_id'], 'required'],
+            [['content', 'author', 'email'], 'required'],
             [['content'], 'string'],
             [['status', 'create_time', 'post_id'], 'integer'],
             [['author', 'email', 'url'], 'string', 'max' => 128],
-            [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::className(), 'targetAttribute' => ['post_id' => 'id']],
         ];
     }
 
@@ -55,9 +54,20 @@ class Comment extends \yii\db\ActiveRecord
             'create_time' => 'Create Time',
             'author' => 'Author',
             'email' => 'Email',
-            'url' => 'Url',
-            'post_id' => 'Post ID',
+            'url' => 'Website',
+            'post_id' => 'Post',
         ];
+    }
+
+    public function approve()
+    {
+        $this->status = Comment::STATUS_APPROVED;
+        $this->save();
+    }
+
+    public static function pendingCommentCount()
+    {
+        return self::find()->where(['status' => self::STATUS_PENDING])->count();
     }
 
     /**
@@ -66,5 +76,15 @@ class Comment extends \yii\db\ActiveRecord
     public function getPost()
     {
         return $this->hasOne(Post::className(), ['id' => 'post_id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord)
+                $this->create_time = time();
+            return true;
+        } else
+            return false;
     }
 }

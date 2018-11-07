@@ -2,7 +2,8 @@
 
 namespace app\controllers;
 
-use app\models\ContactForm;
+use app\models\Category;
+use app\models\Comment;
 use app\models\LoginForm;
 use app\models\Post;
 use app\models\Tag;
@@ -13,6 +14,7 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 class SiteController extends Controller
 {
@@ -78,23 +80,41 @@ class SiteController extends Controller
             ->all();
         $recentPosts = Post::find()->where(['status' => Post::STATUS_PUBLISHED])
             ->orderBy('id DESC')->limit(4)->all();
+
+        $categories = Category::find()->all();
         return $this->render('index', [
             'posts' => $posts,
             'tags' => $tags,
             'pagination' => $pagination,
-            'recentPosts' => $recentPosts
+            'recentPosts' => $recentPosts,
+            'categories' => $categories,
         ]);
     }
 
     public function actionPost($id)
     {
         $post = Post::find()->where(['id' => intval($id)])->one();
+        $comment = new Comment();
+        if (Yii::$app->request->isAjax && $comment->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($comment);
+        }
+
+        if ($comment->load(Yii::$app->request->post())) {
+            if ($post->addComment($comment)) {
+                if ($comment->status == Comment::STATUS_PENDING)
+                    Yii::$app->session->setFlash('commentSubmitted', 'Thank you for your comment.
+                Your comment will be posted once it is approved.');
+            }
+        }
         if (empty($post))
             throw new NotFoundHttpException('The requested page does not exist.');
         return $this->render('single', [
-            'post' => $post
+            'post' => $post,
+            'comment' => $comment
         ]);
     }
+
 
     /**
      * Login action.
@@ -130,31 +150,4 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
 }

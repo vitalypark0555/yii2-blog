@@ -50,7 +50,8 @@
         '../layouts/sidebar.php',
         [
             'tags' => $tags,
-            'recentPosts' => $recentPosts
+            'recentPosts' => $recentPosts,
+            'categories' => $categories
         ]
     ) ?>
 </div>
