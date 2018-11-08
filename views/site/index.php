@@ -4,8 +4,8 @@
             <article class="blog-entry">
                 <div class="blog-wrap">
                     <span class="category text-center"><a
-                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>">Health</a> | <a
-                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>">Workout</a></span>
+                                href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>"><?= $post->category ? $post->category->name : '' ?></a>
+                                </span>
                     <h2 class="text-center"><a
                                 href="<?= \yii\helpers\Url::to(['site/post', 'id' => $post->id]) ?>"><?= $post->title ?></a>
                     </h2>
@@ -46,12 +46,5 @@
             </div>
         </div>
     </div>
-    <?= $this->render(
-        '../layouts/sidebar.php',
-        [
-            'tags' => $tags,
-            'recentPosts' => $recentPosts,
-            'categories' => $categories
-        ]
-    ) ?>
+    <?= $this->render('/layouts/sidebar') ?>
 </div>

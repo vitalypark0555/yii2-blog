@@ -2,13 +2,13 @@
 
 namespace app\controllers;
 
-use app\models\Category;
 use app\models\Comment;
 use app\models\LoginForm;
 use app\models\Post;
-use app\models\Tag;
+use app\models\Search;
 use Yii;
 use yii\data\Pagination;
+use yii\data\SqlDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -67,7 +67,6 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $tags = Tag::find()->orderBy('id DESC')->all();
         $query = Post::find()->where(['status' => Post::STATUS_PUBLISHED])
             ->orderBy("id DESC");
         $pagination = new Pagination([
@@ -78,16 +77,10 @@ class SiteController extends Controller
         $posts = $query->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
-        $recentPosts = Post::find()->where(['status' => Post::STATUS_PUBLISHED])
-            ->orderBy('id DESC')->limit(4)->all();
 
-        $categories = Category::find()->all();
         return $this->render('index', [
             'posts' => $posts,
-            'tags' => $tags,
             'pagination' => $pagination,
-            'recentPosts' => $recentPosts,
-            'categories' => $categories,
         ]);
     }
 
@@ -150,4 +143,27 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
+    public function actionSearch()
+    {
+        $search = new Search();
+        $search->query = Yii::$app->request->queryParams['query'];
+        $count = $search->getCount();
+        $no_result_text = Yii::t('app', 'Search result on: ') . $search->query;
+        $results = new SqlDataProvider([
+            'sql' => $search->getQueryString(),
+            'params' => [':query' => '%' . $search->query . '%'],
+            'totalCount' => $count,
+            'pagination' => [
+                'pageSize' => 10
+            ]]);
+        if (!$count) {
+            $no_result_text = '"' . $search->query . '" ' . Yii::t('app', 'is not found');
+        }
+        return $this->render('search', [
+            'results' => $results->models,
+            'pagination' => $results->pagination,
+            'search' => $search,
+            'no_result_text' => $no_result_text,
+        ]);
+    }
 }

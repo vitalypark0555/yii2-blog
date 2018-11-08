@@ -1,6 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
+$this->title = $post->title;
 ?>
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
@@ -41,7 +42,7 @@
         <div class="comment-box">
             <h2 class="colorlib-heading-2"><?= $post->commentsCount ?> Comments</h2>
             <?php foreach ($post->comments as $com) : ?>
-                <div class="comment-post">
+                <div class="comment-post" id="comment-<?= $com->id ?>">
                     <div class="user" style="background-image: url(images/person1.jpg);"></div>
                     <div class="desc">
                         <h3><?= $com->author ?> <span><?= date('F j, Y h:i:s', $post->create_time) ?></span></h3>

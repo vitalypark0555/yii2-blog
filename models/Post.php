@@ -174,4 +174,8 @@ class Post extends \yii\db\ActiveRecord
         return Url::to(['post/view', 'id' => $this->id]);
     }
 
+    public function getFrontendUrl()
+    {
+        return Url::to(['site/post', 'id' => $this->id]);
+    }
 }
