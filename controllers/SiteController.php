@@ -65,15 +65,56 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($tag = null)
     {
         $query = Post::find()->where(['status' => Post::STATUS_PUBLISHED])
             ->orderBy("id DESC");
+        if (!empty($tag)) {
+            $query->andWhere(new \yii\db\Expression('FIND_IN_SET(:tag,tags)'))->addParams([':tag' => $tag]);
+        }
         $pagination = new Pagination([
             'defaultPageSize' => 3,
             'totalCount' => $query->count()
         ]);
 
+        $posts = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+        return $this->render('index', [
+            'posts' => $posts,
+            'pagination' => $pagination,
+        ]);
+    }
+
+    public function actionTag($tag)
+    {
+        $query = Post::find()->where(['status' => Post::STATUS_PUBLISHED])
+            ->andWhere(new \yii\db\Expression('FIND_IN_SET(:tag,tags)'))->addParams([':tag' => $tag])
+            ->orderBy("id DESC");;
+        $pagination = new Pagination([
+            'defaultPageSize' => 3,
+            'totalCount' => $query->count()
+        ]);
+        $posts = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+        return $this->render('index', [
+            'posts' => $posts,
+            'pagination' => $pagination,
+        ]);
+    }
+
+    public function actionCategory($category_id)
+    {
+        $query = Post::find()->where(['status' => Post::STATUS_PUBLISHED])
+            ->andWhere(['category_id' => intval($category_id)])
+            ->orderBy("id DESC");;
+        $pagination = new Pagination([
+            'defaultPageSize' => 3,
+            'totalCount' => $query->count()
+        ]);
         $posts = $query->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
@@ -148,7 +189,7 @@ class SiteController extends Controller
         $search = new Search();
         $search->query = Yii::$app->request->queryParams['query'];
         $count = $search->getCount();
-        $no_result_text = Yii::t('app', 'Search result on: ') . $search->query;
+        $no_result_text = 'Search result on: ' . $search->query;
         $results = new SqlDataProvider([
             'sql' => $search->getQueryString(),
             'params' => [':query' => '%' . $search->query . '%'],
@@ -157,7 +198,7 @@ class SiteController extends Controller
                 'pageSize' => 10
             ]]);
         if (!$count) {
-            $no_result_text = '"' . $search->query . '" ' . Yii::t('app', 'is not found');
+            $no_result_text = '"' . $search->query . '" ' . 'is not found';
         }
         return $this->render('search', [
             'results' => $results->models,

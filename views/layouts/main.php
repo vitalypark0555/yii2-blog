@@ -27,20 +27,32 @@ AppAsset::register($this);
 </head>
 <body>
 <?php $this->beginBody() ?>
-
-<div class="wrap">
+<div class="colorlib-loader"></div>
+<div id="page">
     <?= $this->render('navbar') ?>
+    <aside id="colorlib-breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 breadcrumbs text-center">
+                    <h2>Read My Blog</h2>
+                </div>
+            </div>
+        </div>
+    </aside>
 
-
-    <div class="container">
-        <?= Alert::widget() ?>
-        <?= $content ?>
+    <div id="colorlib-container">
+        <div class="container">
+            <?= Alert::widget() ?>
+            <?= $content ?>
+        </div>
     </div>
 
+
+    <?= $this->render('footer') ?>
 </div>
-
-<?= $this->render('footer') ?>
-
+<div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-arrow-up2"></i></a>
+</div>
 <?php $this->endBody() ?>
 </body>
 </html>

@@ -51,6 +51,9 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 '/' => 'site/index',
+                '/admin' => 'admin/default/index',
+                'tag/<tag:\w+>' => 'site/tag',
+                'category/<category_id:\d+>' => 'site/category',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
 
             ],

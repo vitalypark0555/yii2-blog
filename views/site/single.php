@@ -7,7 +7,8 @@ $this->title = $post->title;
     <div class="col-md-10 col-md-offset-1">
         <article class="blog-entry">
             <div class="blog-wrap">
-                <span class="category text-center"><a href="#">Category</a></span>
+                <span class="category text-center"><a
+                            href="#"><?= $post->category ? $post->category->name : '' ?></a></span>
                 <h2 class="text-center"><a href="#"><?= $post->title ?></a></h2>
                 <div class="blog-image">
                     <div class="owl-carousel owl-carousel2 blog-item">

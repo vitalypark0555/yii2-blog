@@ -21,7 +21,7 @@ class Tag extends \yii\db\ActiveRecord
 
     public static function array2string($tags)
     {
-        return implode(', ', $tags);
+        return implode(',', $tags);
     }
 
     public static function getTagNames()
